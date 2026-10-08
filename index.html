@@ -33,8 +33,6 @@
   button{font-family:inherit;-webkit-appearance:none;appearance:none;cursor:pointer}
   img{-webkit-user-drag:none;pointer-events:none}
   #sky{position:fixed;inset:0;width:100%;height:100%;z-index:0}
-  #vignette{position:fixed;inset:0;z-index:0;pointer-events:none;
-    background:radial-gradient(ellipse 120% 90% at 50% 45%,transparent 45%,rgba(0,0,0,.55) 100%)}
   #fx{position:fixed;inset:0;width:100%;height:100%;z-index:20;pointer-events:none}
 
   /* ---------- загрузка ---------- */
@@ -52,7 +50,6 @@
     padding:max(28px,env(safe-area-inset-top)) 24px max(28px,env(safe-area-inset-bottom));text-align:center;
     opacity:0;visibility:hidden;pointer-events:none;transition:opacity .9s ease,visibility 0s .9s,transform .9s var(--ease)}
   .scene.active{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .9s ease .25s,visibility 0s}
-  .scene.leave{transform:scale(1.12)}
   .scene>*{opacity:0;transform:translateY(26px) scale(.98);
     transition:opacity .9s ease,transform 1s var(--ease)}
   .scene.active>*{opacity:1;transform:none;transition-delay:calc(.35s + var(--i,0)*.14s)}
@@ -167,11 +164,11 @@
   .progress{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);margin:12px 0 0;min-height:16px}
 
   .modal{position:fixed;inset:0;max-width:430px;margin:0 auto;z-index:15;display:flex;align-items:center;justify-content:center;padding:24px;
-    background:rgba(2,3,10,.82);opacity:0;pointer-events:none;transition:opacity .45s}
-  .modal.open{opacity:1;pointer-events:auto}
+    background:rgba(2,3,10,.82);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .45s,visibility 0s .45s}
+  .modal.open{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .45s}
   .mcard{position:relative;overflow:hidden;width:min(340px,100%);background:linear-gradient(170deg,rgba(255,255,255,.1),rgba(255,255,255,.03));
     border:1px solid var(--line);border-radius:24px;padding:34px 26px 26px;text-align:center;
-    transform:translateY(30px) scale(.9) rotateX(20deg);opacity:0;transition:transform .6s var(--ease),opacity .5s}
+    transform:translateY(30px) scale(.92);opacity:0;transition:transform .6s var(--ease),opacity .5s}
   .mcard::before{content:'';position:absolute;left:15%;right:15%;top:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
   .mcard::after{content:'';position:absolute;width:220px;height:220px;left:50%;top:-150px;margin-left:-110px;border-radius:50%;
     background:radial-gradient(circle,rgba(243,217,164,.18),transparent 70%);pointer-events:none}
@@ -184,15 +181,16 @@
   /* ---------- колоды карточек ---------- */
   .deck{position:relative;width:min(300px,80vw);height:min(400px,52vh);height:min(400px,52dvh);margin-top:26px}
   .deck::before{content:'';position:absolute;inset:-22% -28%;border-radius:50%;pointer-events:none;
-    background:radial-gradient(closest-side,rgba(169,212,255,.2),rgba(243,217,164,.07) 60%,transparent);
-    transform:scale(calc(.88 + var(--lo)*.24));opacity:calc(.45 + var(--e)*.55)}
+    background:radial-gradient(closest-side,rgba(169,212,255,.2),rgba(243,217,164,.07) 60%,transparent);opacity:.85}
+  .deck::after{content:'';position:absolute;left:6%;right:6%;bottom:-22px;height:34px;border-radius:50%;pointer-events:none;
+    background:radial-gradient(closest-side,rgba(0,0,0,.6),transparent)}
   .card{position:absolute;inset:0;border-radius:24px;touch-action:none;
     transition:transform .65s var(--ease),opacity .5s}
-  .card.under{box-shadow:inset 0 0 0 999px rgba(3,4,10,.38),0 24px 60px rgba(0,0,0,.6)}
+  .card.under{box-shadow:inset 0 0 0 999px rgba(3,4,10,.38)}
   .card.drag{transition:none}
   .rcard{padding:30px 26px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;
     background:linear-gradient(165deg,#1b2045,#080a1a);border:1px solid #2a2f4a;
-    box-shadow:0 24px 60px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.08)}
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
   .rcard::before{content:'';position:absolute;width:240px;height:240px;right:-100px;top:-100px;border-radius:50%;
     background:radial-gradient(circle,rgba(169,212,255,.2),transparent 70%)}
   .rcard::after{content:'';position:absolute;width:200px;height:200px;left:-90px;bottom:-90px;border-radius:50%;
@@ -204,7 +202,7 @@
   .rcard .n{position:relative;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:18px}
   .rcard .n::before{content:'✦';display:block;font-size:14px;letter-spacing:0;margin-bottom:10px;text-shadow:0 0 10px rgba(243,217,164,.9)}
   .rcard .t{font:italic 500 clamp(26px,7.4vw,31px)/1.25 var(--serif);position:relative;z-index:1}
-  .pcard{background:#0b0e20;border:1px solid #262b45;padding:10px 10px 0;box-shadow:0 24px 60px rgba(0,0,0,.65);display:flex;flex-direction:column}
+  .pcard{background:#0b0e20;border:1px solid #262b45;padding:10px 10px 0;box-shadow:inset 0 1px 0 rgba(255,255,255,.06);display:flex;flex-direction:column}
   .pcard .ph{flex:1;border-radius:16px;overflow:hidden;position:relative}
   .pcard .ph img{width:100%;height:100%;object-fit:cover;display:block}
   .pcard.top .ph img{animation:kb 9s ease-in-out infinite alternate}
@@ -291,7 +289,6 @@
 </head>
 <body>
 <canvas id="sky"></canvas>
-<div id="vignette"></div>
 <button id="mute" aria-label="Музыка"><i></i><i></i><i></i></button>
 <div id="loader"><div class="lstar"></div><p>Загружаю вселенную</p></div>
 
@@ -800,16 +797,26 @@ function makeDeck(el, items, cls, render, onDone){
     const c = document.createElement('div'); c.className = 'card ' + cls;
     render(c, item, k);
     attachSwipe(c);
+    if(k >= 3) c.style.display = 'none';
     el.appendChild(c);
     return c;
   });
+  // телефону тяжело держать в памяти много движущихся карточек — в работе только 3 верхние
+  const VISIBLE = 3;
+  const pos = (d, k) => `translateY(${d*14}px) scale(${1 - d*.05}) rotate(${d ? (k%2 ? 3 : -3) : 0}deg)`;
   function layout(){
     cards.forEach((c,k)=>{
       if(k < i) return;
       const d = k - i;
+      if(d >= VISIBLE){ c.style.display = 'none'; return; }
+      if(c.style.display === 'none'){
+        // карточка только что показалась — мягко проявляем её из-за стопки
+        c.style.display = ''; c.style.transition = 'none'; c.style.opacity = 0; c.style.transform = pos(d + 1, k);
+        void c.offsetWidth; c.style.transition = '';
+      }
       c.style.zIndex = 100 - k;
-      c.style.transform = `translateY(${d*14}px) scale(${1 - d*.05}) rotate(${d ? (k%2 ? 3 : -3) : 0}deg)`;
-      c.style.opacity = d > 2 ? 0 : 1;
+      c.style.transform = pos(d, k);
+      c.style.opacity = 1;
       c.classList.toggle('under', d > 0);
       c.classList.toggle('top', d === 0);
     });
@@ -835,6 +842,7 @@ function makeDeck(el, items, cls, render, onDone){
   function fling(c, d){
     c.classList.remove('top');
     c.style.transform = `translate(${d*560}px,-60px) rotate(${d*32}deg)`; c.style.opacity = 0;
+    setTimeout(()=>{ c.style.display = 'none'; }, 700);
     const r = c.getBoundingClientRect();
     FX.burst(r.left + r.width/2, r.top + r.height/2, 12, 'white', 2);
     i++;
@@ -843,12 +851,14 @@ function makeDeck(el, items, cls, render, onDone){
   return {
     enter(){
       cards.forEach((c,k)=>{
-        c.style.transition = 'none';
+        const d = k - i;
+        if(k < i || d >= VISIBLE){ c.style.display = 'none'; return; }
+        c.style.display = ''; c.style.transition = 'none';
         c.style.transform = `translateY(75vh) scale(.55) rotate(${(k%2 ? 1 : -1)*24}deg)`;
         c.style.opacity = 0;
       });
       void el.offsetWidth;
-      cards.forEach((c,k)=>{ c.style.transition = ''; c.style.transitionDelay = (.45 + (cards.length - k)*.09) + 's'; });
+      cards.forEach((c,k)=>{ if(c.style.display === 'none') return; c.style.transition = ''; c.style.transitionDelay = (.45 + (VISIBLE - (k - i))*.1) + 's'; });
       layout();
       setTimeout(()=>cards.forEach(c=>c.style.transitionDelay = ''), 2000);
     }
@@ -987,7 +997,7 @@ const FX = (()=>{
   const c = $('#fx'), x = c.getContext('2d');
   let r = 1, parts = [], running = false;
   let rt = 0;
-  function size(){ r = Math.min(devicePixelRatio || 1, 2); c.width = innerWidth*r; c.height = innerHeight*r; }
+  function size(){ r = Math.min(devicePixelRatio || 1, 1.5); c.width = innerWidth*r; c.height = innerHeight*r; }
   addEventListener('resize', ()=>{ clearTimeout(rt); rt = setTimeout(size, 250); }); size();
   const pick = kind => kind === 'mix' ? (Math.random() < .55 ? 'gold' : Math.random() < .5 ? 'ice' : 'white') : kind;
   function add(p){ parts.push(p); if(!running){ running = true; requestAnimationFrame(loop); } }
@@ -1049,6 +1059,11 @@ const Sky = (()=>{
     const g = s.getContext('2d'), gr = g.createRadialGradient(64,64,0,64,64,64);
     gr.addColorStop(0,`rgba(${rgb},1)`); gr.addColorStop(.5,`rgba(${rgb},.35)`); gr.addColorStop(1,`rgba(${rgb},0)`);
     g.fillStyle = gr; g.fillRect(0,0,128,128); return s; };
+  // затемнение по краям экрана: маленькая картинка, растянутая на весь экран
+  const vig = (()=>{ const s = document.createElement('canvas'); s.width = 64; s.height = 128;
+    const g = s.getContext('2d'), gr = g.createRadialGradient(32,58,0,32,58,74);
+    gr.addColorStop(0,'rgba(0,0,0,0)'); gr.addColorStop(.5,'rgba(0,0,0,0)'); gr.addColorStop(1,'rgba(0,0,0,.55)');
+    g.fillStyle = gr; g.fillRect(0,0,64,128); return s; })();
   // медленные полярные сияния, которые дышат вместе с музыкой
   const aurora = [
     { s:blob('40,150,170'), a:.10, px:.25, py:.3, ax:.25, ay:.15, sp:.00021, ph:0, sz:1.1 },
@@ -1108,7 +1123,7 @@ const Sky = (()=>{
   function size(){
     const key = innerWidth + 'x' + innerHeight;
     if(key === lastSize) return; lastSize = key;
-    r = Math.min(devicePixelRatio || 1, 2); W = c.width = innerWidth*r; H = c.height = innerHeight*r;
+    r = Math.min(devicePixelRatio || 1, 1.5); W = c.width = innerWidth*r; H = c.height = innerHeight*r;
     build(); buildStars();
   }
   // при появлении/скрытии панелей браузера resize сыпется пачкой — перестраиваем один раз
@@ -1195,6 +1210,8 @@ const Sky = (()=>{
         }
       }
     }
+
+    x.globalAlpha = 1; x.drawImage(vig, 0, 0, W, H);
 
     // мягкие кольца-волны на сильных долях
     if(P.live && P.b > .85 && prevB < .8 && now - lastRipple > 900){
