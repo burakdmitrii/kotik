@@ -217,6 +217,54 @@
   .hint span{display:inline-block;animation:nudge 1.6s ease-in-out infinite}
   @keyframes nudge{50%{transform:translateX(6px)}}
 
+  /* ---------- найди пары ---------- */
+  .mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;width:min(340px,100%);margin-top:20px}
+  .mc{position:relative;aspect-ratio:3/4;border:0;padding:0;background:none;color:inherit;transition:transform .16s ease-in}
+  .mc.turn{transform:scaleX(0)}
+  .mc .face{position:absolute;inset:0;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px}
+  .mc .back{background:linear-gradient(160deg,#1b2045,#0a0c20);border:1px solid #2a2f4a;color:var(--gold);font-size:18px;text-shadow:0 0 10px rgba(243,217,164,.8)}
+  .mc .back::after{content:'';position:absolute;inset:5px;border-radius:10px;border:1px solid rgba(243,217,164,.12)}
+  .mc .front{display:none;background:linear-gradient(160deg,#262d5c,#11142e);border:1px solid rgba(243,217,164,.45)}
+  .mc.open .front{display:flex}
+  .mc.open .back{display:none}
+  .mc .front span{font-size:27px;line-height:1}
+  .mc .front small{font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .mc.done .front{border-color:var(--gold);box-shadow:0 0 16px rgba(243,217,164,.35)}
+  .mc.done .front small{color:var(--gold)}
+  .scene.active .mc{animation:mcIn .55s var(--ease) backwards;animation-delay:calc(.6s + var(--n)*.05s)}
+  @keyframes mcIn{from{opacity:0;transform:translateY(16px) scale(.9)}}
+  .mc.shake{animation:shake .4s!important}
+  .mtoast{min-height:26px;margin:16px 0 0;font:italic 500 21px var(--serif);color:var(--gold);opacity:0;transition:opacity .4s}
+  .mtoast.show{opacity:1}
+
+  /* ---------- поймай звёзды ---------- */
+  .chud{display:flex;align-items:center;gap:14px;width:min(340px,100%);margin-top:14px;font:600 13px var(--sans);letter-spacing:.12em;color:var(--gold)}
+  .cbar{flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,.12);overflow:hidden}
+  .cbar b{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--ice));transform-origin:left}
+  .carena{position:relative;width:min(340px,100%);height:52vh;height:52dvh;margin-top:12px;border-radius:22px;border:1px solid var(--line);
+    overflow:hidden;touch-action:none;background:radial-gradient(ellipse at 50% 120%,rgba(169,212,255,.1),transparent 60%);transition:border-color .2s,box-shadow .2s}
+  .carena.hit{border-color:rgba(255,120,120,.85);box-shadow:inset 0 0 34px rgba(255,90,90,.3)}
+  #ccanvas{position:absolute;inset:0;width:100%;height:100%}
+  .cover{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:22px;
+    background:rgba(3,4,10,.62);text-align:center}
+  .cover p{margin:0;font-weight:300;font-size:15px;line-height:1.6;color:var(--ink)}
+  .cover .ttl{font:500 34px/1.1 var(--serif);color:#fff;margin-bottom:6px}
+  .cover .secret{font:italic 500 23px/1.35 var(--serif);color:var(--gold);margin-top:8px}
+  .cover .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+  .cover .row .btn{margin-top:22px;padding:13px 26px}
+
+  /* ---------- купоны ---------- */
+  .coupons{display:flex;flex-direction:column;gap:10px;width:min(330px,100%);margin-top:18px}
+  .coupon{position:relative;height:74px;border-radius:14px;overflow:hidden;background:linear-gradient(135deg,#1f2550,#0d1028);
+    border:1px dashed rgba(243,217,164,.55);transition:border-color .5s,box-shadow .5s}
+  .cp-in{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:0 16px}
+  .cp-in small{font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted)}
+  .cp-in b{font:italic 500 21px/1.15 var(--serif);color:var(--ink)}
+  .coupon canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;transition:opacity .7s}
+  .coupon.open canvas{opacity:0;pointer-events:none}
+  .coupon.open{border-style:solid;border-color:var(--gold);box-shadow:0 0 18px rgba(243,217,164,.25)}
+  .scene.active .coupon{animation:mcIn .6s var(--ease) backwards;animation-delay:calc(.6s + var(--n)*.12s)}
+
   /* ---------- вопрос ---------- */
   .answer{display:flex;flex-direction:column;align-items:center}
   .orb{position:relative;width:16px;height:16px;border-radius:50%;background:#fff;margin-bottom:50px;
@@ -348,7 +396,34 @@
   <p class="hint">Свайп или тап <span>→</span></p>
 </section>
 
-<!-- 5. Question -->
+<!-- 5. Pairs -->
+<section class="scene" id="pairsScene">
+  <p class="eyebrow">Глава пятая</p>
+  <h2>Найди пары</h2>
+  <p class="sub" style="margin-top:8px" id="pairsSub">Открывай карточки: на них наша история</p>
+  <div class="mgrid" id="mgrid"></div>
+  <p class="mtoast" id="mtoast"></p>
+  <button class="btn hidden" id="pairsNext">Дальше</button>
+</section>
+
+<!-- 6. Catch the stars -->
+<section class="scene" id="catchScene">
+  <p class="eyebrow">Глава шестая</p>
+  <h2>Поймай звёзды</h2>
+  <div class="chud"><span id="cscore"></span><i class="cbar"><b id="ctime"></b></i></div>
+  <div class="carena" id="carena"><canvas id="ccanvas"></canvas><div class="cover" id="cover"></div></div>
+</section>
+
+<!-- 7. Coupons -->
+<section class="scene" id="couponScene">
+  <p class="eyebrow">Глава седьмая</p>
+  <h2>Мои подарки</h2>
+  <p class="sub" style="margin-top:8px" id="couponSub">Сотри звёздную пыль пальцем</p>
+  <div class="coupons" id="coupons"></div>
+  <button class="btn hidden" id="couponNext">Дальше</button>
+</section>
+
+<!-- 8. Question -->
 <section class="scene" id="askScene">
   <div class="answer">
     <div class="orb"></div>
@@ -358,7 +433,7 @@
   </div>
 </section>
 
-<!-- 6. Letter -->
+<!-- 9. Letter -->
 <section class="scene scroll" id="letter">
   <div class="avatar"><span class="ring2"></span><span class="ring"></span><img id="avatarImg" alt=""></div>
   <p class="eyebrow">Последняя глава</p>
@@ -445,6 +520,32 @@ const CONFIG = {
     "Просто потому, что это ты"
   ],
 
+  // Игра «Найди пары»: значок, подпись на карточке и фраза, когда пара найдена
+  pairs: [
+    { icon:"📱", label:"TikTok",  text:"Здесь всё началось" },
+    { icon:"🖼️", label:"Обои",    text:"Лучший повод увидеться 😂" },
+    { icon:"🎠", label:"Качели",  text:"Наша первая прогулка" },
+    { icon:"🌳", label:"Парк",    text:"Наше любимое место" },
+    { icon:"🐱", label:"Котик",   text:"Это я 😺" },
+    { icon:"🧽", label:"Мочалка", text:"И это тоже я 😂" }
+  ],
+
+  // Игра «Поймай звёзды»: сколько очков набрать и за сколько секунд
+  catchGoal: 15,
+  catchTime: 25,
+  catchSecret: "Ты поймала все мои звёзды. Но моё сердце ты поймала ещё раньше ♥",
+
+  // Купоны-подарки: стираешь пальцем — открывается
+  coupons: [
+    "Свидание, куда ты захочешь",
+    "Безлимитные обнимашки на целый день",
+    "Я готовлю тебе ужин",
+    "Одно любое желание"
+  ],
+
+  // Секретная звезда: иногда мерцает на фоне любой главы, если нажать — откроется послание
+  eggText: "Ты нашла секретную звезду! Значит, ты самая внимательная и самая любимая. Загадай желание: оно обязательно сбудется ✦",
+
   question: "Будешь моей навсегда, буся?",
   noTexts: ["Нет", "Точно нет?", "Подумай ещё", "Ну пожалуйста", "Я же старался…", "Кнопка сломалась 😅", "Жми уже «Да»"],
 
@@ -464,6 +565,7 @@ const CONFIG = {
 const $ = s => document.querySelector(s);
 const scenes = [...document.querySelectorAll('.scene')];
 const enterHooks = {};
+const LETTER = 9;   // номер сцены с письмом
 let cur = 0;
 
 // порядковые номера для каскадного появления элементов сцены
@@ -535,7 +637,7 @@ function makeSprite(rgb){
   gr.addColorStop(.35,`rgba(${rgb},.22)`); gr.addColorStop(1,`rgba(${rgb},0)`);
   g.fillStyle = gr; g.fillRect(0,0,64,64); return s;
 }
-const SPR = { white:makeSprite('255,255,255'), ice:makeSprite('170,205,255'), warm:makeSprite('255,214,170'), gold:makeSprite('243,217,164') };
+const SPR = { white:makeSprite('255,255,255'), ice:makeSprite('170,205,255'), warm:makeSprite('255,214,170'), gold:makeSprite('243,217,164'), pink:makeSprite('255,180,205') };
 
 /* ---------- Музыка ---------- */
 const Music = (()=>{
@@ -629,7 +731,7 @@ document.querySelectorAll('[data-next]').forEach(b => b.addEventListener('click'
 let resumeTo = 0;
 (function(){
   const sv = Progress.saved;
-  if(!sv || !(sv.scene >= 1 && sv.scene <= 6)) return;
+  if(!sv || !(sv.scene >= 1 && sv.scene <= LETTER)) return;
   resumeTo = sv.scene;
   $('#introSub').innerHTML = 'Кажется, нас прервали.<br>Продолжим с того места, где ты остановилась?';
   $('#openBtn').textContent = 'Продолжить';
@@ -877,6 +979,193 @@ const reasonDeck = makeDeck($('#reasonDeck'), CONFIG.reasons, 'rcard', (c,t,k)=>
 }, ()=>go(cur+1));
 enterHooks[4] = ()=>reasonDeck.enter();
 
+/* ---------- Глава 5: найди пары ---------- */
+(function(){
+  const grid = $('#mgrid'), toast = $('#mtoast');
+  let first = null, lock = false, found = 0, moves = 0, tt = 0;
+  const flip = (c, open) => { c.classList.add('turn'); setTimeout(()=>{ c.classList.toggle('open', open); c.classList.remove('turn'); }, 160); };
+  const center = c => { const r = c.getBoundingClientRect(); return [r.left + r.width/2, r.top + r.height/2]; };
+  shuffle(CONFIG.pairs.flatMap((p,i)=>[i,i])).forEach((pi, n)=>{
+    const p = CONFIG.pairs[pi], b = document.createElement('button');
+    b.className = 'mc'; b.dataset.p = pi; b.style.setProperty('--n', n);
+    b.innerHTML = '<div class="face back">✦</div><div class="face front"><span></span><small></small></div>';
+    b.querySelector('span').textContent = p.icon; b.querySelector('small').textContent = p.label;
+    b.onclick = ()=>{
+      if(lock || b.classList.contains('open') || b.classList.contains('turn')) return;
+      flip(b, true);
+      if(!first){ first = b; return; }
+      const a = first; first = null; moves++;
+      if(a.dataset.p === b.dataset.p){
+        found++;
+        setTimeout(()=>{
+          a.classList.add('done'); b.classList.add('done');
+          [a,b].forEach(c=>FX.burst(...center(c), 14, 'gold', 2.6));
+          toast.textContent = p.text; toast.classList.add('show');
+          clearTimeout(tt); tt = setTimeout(()=>toast.classList.remove('show'), 2200);
+          if(found === CONFIG.pairs.length) setTimeout(finish, 700);
+        }, 250);
+      } else {
+        lock = true;
+        setTimeout(()=>{ a.classList.add('shake'); b.classList.add('shake'); }, 320);
+        setTimeout(()=>{ a.classList.remove('shake'); b.classList.remove('shake'); flip(a, false); flip(b, false); setTimeout(()=>lock = false, 180); }, 950);
+      }
+    };
+    grid.appendChild(b);
+  });
+  function finish(){
+    $('#pairsSub').textContent = `Все пары найдены за ${moves} ${plural(moves,'ход','хода','ходов')}!`;
+    toast.textContent = 'Ты знаешь нашу историю наизусть'; toast.classList.add('show'); clearTimeout(tt);
+    const r = grid.getBoundingClientRect();
+    FX.heartBurst(r.left + r.width/2, r.top + r.height/2);
+    const nb = $('#pairsNext'); nb.classList.remove('hidden'); nb.classList.add('pop');
+  }
+  $('#pairsNext').onclick = ()=>go(cur + 1);
+})();
+
+/* ---------- Глава 6: поймай звёзды ---------- */
+(function(){
+  const ar = $('#carena'), cv = $('#ccanvas'), x = cv.getContext('2d'), cover = $('#cover');
+  const GOAL = CONFIG.catchGoal, TIME = CONFIG.catchTime;
+  let W = 0, H = 0, r = 1, items = [], score = 0, left = TIME, running = false, last = 0, spawnT = 0, down = false, hitT = 0;
+  function size(){ r = Math.min(devicePixelRatio || 1, 1.5); W = cv.width = Math.round(ar.clientWidth*r); H = cv.height = Math.round(ar.clientHeight*r); }
+  function hud(){ $('#cscore').textContent = `★ ${score} / ${GOAL}`; $('#ctime').style.transform = `scaleX(${Math.max(0, left/TIME).toFixed(3)})`; }
+  function show(html, buttons){
+    cover.innerHTML = html + '<div class="row"></div>';
+    buttons.forEach(([label, ghost, fn])=>{ const b = document.createElement('button'); b.className = 'btn' + (ghost ? ' ghost' : ''); b.textContent = label; b.onclick = fn; cover.querySelector('.row').appendChild(b); });
+    cover.classList.remove('hidden');
+  }
+  function intro(){
+    score = 0; left = TIME; hud();
+    show('<p class="ttl">Готова?</p><p>Лови пальцем звёзды ★ и сердечки ♥<br>(сердечко — 2 очка). Астероиды не трогай!</p>' +
+         `<p style="margin-top:6px;color:var(--gold)">Набери ${GOAL} очков за ${TIME} секунд</p>`, [['Начать', false, start]]);
+  }
+  function start(){
+    cover.classList.add('hidden'); size();
+    items = []; score = 0; left = TIME; spawnT = 0; running = true; last = performance.now(); hud();
+    requestAnimationFrame(loop);
+  }
+  function spawn(){
+    const el = TIME - left, k = Math.random();
+    const type = k < .14 + el*.006 ? 'rock' : k < .38 ? 'heart' : 'star';
+    items.push({ type, x: 24 + Math.random()*(W/r - 48), y: -24, vy: 1.5 + Math.random()*1.3 + el*.055, vx: (Math.random() - .5)*.5,
+                 s: type === 'rock' ? 15 + Math.random()*7 : 13, rot: Math.random()*6, vr: (Math.random() - .5)*.06, ph: Math.random()*6 });
+  }
+  function draw(it, t){
+    const px = it.x*r, py = it.y*r;
+    if(it.type === 'star'){
+      const sz = it.s*r*4*(1 + .12*Math.sin(t/120 + it.ph));
+      x.globalAlpha = 1; x.drawImage(SPR.gold, px - sz/2, py - sz/2, sz, sz);
+      x.save(); x.translate(px, py); x.rotate(it.rot); x.globalAlpha = .7; x.strokeStyle = '#fff8e8'; x.lineWidth = r;
+      const L = it.s*r*1.3; x.beginPath(); x.moveTo(-L,0); x.lineTo(L,0); x.moveTo(0,-L); x.lineTo(0,L); x.stroke(); x.restore();
+    } else if(it.type === 'heart'){
+      const sz = it.s*r*2.2*(1 + .1*Math.sin(t/100 + it.ph));
+      x.globalAlpha = .55; x.drawImage(SPR.warm, px - sz, py - sz, sz*2, sz*2);
+      x.globalAlpha = 1; x.fillStyle = '#f5b3c4'; x.font = `${sz}px serif`; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('♥', px, py);
+    } else {
+      const R = it.s*r;
+      x.save(); x.translate(px, py); x.rotate(it.rot); x.globalAlpha = 1;
+      const g = x.createRadialGradient(-R*.35, -R*.35, R*.1, 0, 0, R);
+      g.addColorStop(0, '#9a9db0'); g.addColorStop(1, '#3a3d4e');
+      x.fillStyle = g; x.beginPath(); x.arc(0, 0, R, 0, Math.PI*2); x.fill();
+      x.fillStyle = 'rgba(30,32,44,.6)';
+      [[.35,.2,.22],[-.3,.35,.16],[-.1,-.4,.13]].forEach(([a,b,c])=>{ x.beginPath(); x.arc(a*R, b*R, c*R, 0, Math.PI*2); x.fill(); });
+      x.restore();
+    }
+  }
+  function loop(now){
+    if(!running) return;
+    const k = Math.min(3, (now - last)/16.7); last = now;
+    left -= k/60; spawnT -= k;
+    if(spawnT <= 0){ spawn(); spawnT = Math.max(13, 32 - (TIME - left)*.8); }
+    x.clearRect(0, 0, W, H);
+    for(const it of items){ it.y += it.vy*k; it.x += it.vx*k; it.rot += it.vr*k; draw(it, now); }
+    items = items.filter(it => !it.dead && it.y < H/r + 30);
+    hud();
+    if(left <= 0){ end(); return; }
+    requestAnimationFrame(loop);
+  }
+  function grab(e){
+    if(!running) return;
+    const b = ar.getBoundingClientRect(), mx = e.clientX - b.left, my = e.clientY - b.top;
+    for(const it of items){
+      if(it.dead || Math.hypot(it.x - mx, it.y - my) > it.s + 20) continue;
+      it.dead = true;
+      if(it.type === 'rock'){
+        score = Math.max(0, score - 3);
+        ar.classList.add('hit'); clearTimeout(hitT); hitT = setTimeout(()=>ar.classList.remove('hit'), 350);
+        FX.burst(e.clientX, e.clientY, 10, 'white', 2);
+      } else {
+        score += it.type === 'heart' ? 2 : 1;
+        FX.burst(e.clientX, e.clientY, 12, it.type === 'heart' ? 'warm' : 'gold', 2.4, it.type === 'heart');
+      }
+      hud();
+    }
+  }
+  ar.addEventListener('pointerdown', e=>{ down = true; grab(e); });
+  ar.addEventListener('pointermove', e=>{ if(down || e.pointerType === 'mouse') grab(e); });
+  ['pointerup','pointercancel','pointerleave'].forEach(t=>ar.addEventListener(t, ()=>down = false));
+  function end(){
+    running = false; items = []; x.clearRect(0, 0, W, H);
+    const next = ()=>{ cv.width = cv.height = 0; go(cur + 1); };
+    if(score >= GOAL){
+      const b = ar.getBoundingClientRect();
+      FX.heartBurst(b.left + b.width/2, b.top + b.height/2);
+      show(`<p class="ttl">Победа! ★ ${score}</p><p class="secret"></p>`, [['Дальше', false, next]]);
+      cover.querySelector('.secret').textContent = CONFIG.catchSecret;
+    } else {
+      show(`<p class="ttl">Почти!</p><p>★ ${score} из ${GOAL}. Ещё разок?</p>`, [['Ещё раз', false, start], ['Дальше', true, next]]);
+    }
+  }
+  enterHooks[6] = intro;
+  intro();
+})();
+
+/* ---------- Глава 7: купоны ---------- */
+(function(){
+  const box = $('#coupons'); let opened = 0;
+  const list = CONFIG.coupons.map((t,i)=>{
+    const c = document.createElement('div'); c.className = 'coupon'; c.style.setProperty('--n', i);
+    c.innerHTML = `<div class="cp-in"><small>Купон № ${i+1}</small><b></b></div><canvas></canvas>`;
+    c.querySelector('b').textContent = t;
+    box.appendChild(c); return c;
+  });
+  function paint(c){
+    const cv = c.querySelector('canvas'), r = Math.min(devicePixelRatio || 1, 1.5);
+    cv.width = Math.max(1, Math.round(c.clientWidth*r)); cv.height = Math.max(1, Math.round(c.clientHeight*r));
+    const g = cv.getContext('2d');
+    const grd = g.createLinearGradient(0, 0, cv.width, cv.height);
+    grd.addColorStop(0, '#b8925a'); grd.addColorStop(.45, '#f3d9a4'); grd.addColorStop(.55, '#f8e6bf'); grd.addColorStop(1, '#a8834e');
+    g.fillStyle = grd; g.fillRect(0, 0, cv.width, cv.height);
+    for(let i=0;i<90;i++){ const s = (Math.random()*1.6 + .5)*r; g.fillStyle = `rgba(255,255,255,${(Math.random()*.8).toFixed(2)})`; g.fillRect(Math.random()*cv.width, Math.random()*cv.height, s, s); }
+    g.fillStyle = 'rgba(70,48,14,.6)'; g.font = `600 ${11*r}px Manrope, sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.fillText('✦  С О Т Р И   М Е Н Я  ✦', cv.width/2, cv.height/2);
+    g.globalCompositeOperation = 'destination-out'; g.lineCap = 'round'; g.lineJoin = 'round'; g.lineWidth = 30*r;
+    let down = false, lx = 0, ly = 0, moves = 0, done = false;
+    const pt = e => { const bb = cv.getBoundingClientRect(); return [(e.clientX - bb.left)*cv.width/bb.width, (e.clientY - bb.top)*cv.height/bb.height]; };
+    const line = (a, b2, c2, d) => { g.beginPath(); g.moveTo(a, b2); g.lineTo(c2, d); g.stroke(); };
+    const check = () => {
+      const data = g.getImageData(0, 0, cv.width, cv.height).data; let clear = 0, n = 0;
+      for(let i = 3; i < data.length; i += 32){ n++; if(data[i] < 40) clear++; }
+      if(clear/n > .5){ done = true; reveal(c, cv); }
+    };
+    cv.onpointerdown = e => { if(done) return; down = true; cv.setPointerCapture(e.pointerId); [lx, ly] = pt(e); line(lx, ly, lx + .1, ly); };
+    cv.onpointermove = e => { if(!down || done) return; const [px, py] = pt(e); line(lx, ly, px, py); lx = px; ly = py; if(++moves % 6 === 0) check(); };
+    cv.onpointerup = cv.onpointercancel = () => { if(down && !done) check(); down = false; };
+  }
+  function reveal(c, cv){
+    c.classList.add('open');
+    const r = c.getBoundingClientRect();
+    FX.burst(r.left + r.width/2, r.top + r.height/2, 26, 'gold', 3.5, true);
+    setTimeout(()=>{ cv.width = cv.height = 0; }, 900);
+    if(++opened === list.length){
+      $('#couponSub').textContent = 'Сделай скриншот: купоны действуют всегда 😉';
+      const nb = $('#couponNext'); nb.classList.remove('hidden'); nb.classList.add('pop');
+    }
+  }
+  enterHooks[7] = ()=>setTimeout(()=>list.forEach(c=>{ if(!c.classList.contains('open')) paint(c); }), 60);
+  $('#couponNext').onclick = ()=>go(cur + 1);
+})();
+
 /* ---------- Вопрос ---------- */
 $('#question').textContent = CONFIG.question;
 const yes = $('#yes'), no = $('#no'); let tries = 0, lastDodge = 0;
@@ -939,7 +1228,7 @@ yes.addEventListener('click', ()=>{
   FX.heartBurst(innerWidth/2, innerHeight/2);
   FX.burst(innerWidth/2, innerHeight/2, 140, 'mix', 9, true);
   Sky.warp(1.6);
-  setTimeout(()=>go(6), 1100);
+  setTimeout(()=>go(LETTER), 1100);
 });
 
 /* ---------- Письмо ---------- */
@@ -947,7 +1236,7 @@ $('#avatarImg').src = CONFIG.letterPhoto;
 $('#love').textContent = CONFIG.love;
 $('#sign').textContent = CONFIG.from;
 let ambient = null;
-enterHooks[6] = ()=>{
+enterHooks[LETTER] = ()=>{
   const box = $('#letterLines'), sc = $('#letter'), love = $('#love');
   box.innerHTML = ''; ['#love','#sign','#again'].forEach(s=>$(s).classList.remove('show'));
   const lines = CONFIG.letter.map(t=>{
@@ -972,7 +1261,7 @@ enterHooks[6] = ()=>{
   setTimeout(()=>Progress.clear(), end + 2600);   // дочитала до конца — в следующий раз всё начнётся сначала
   reveal($('#again'), end + 5200, love);
   clearInterval(ambient);
-  ambient = setInterval(()=>{ if(cur === 6) FX.rise(); }, 260);
+  ambient = setInterval(()=>{ if(cur === LETTER) FX.rise(); }, 260);
 };
 $('#again').onclick = ()=>{ Progress.clear(); location.reload(); };
 
@@ -980,9 +1269,18 @@ $('#again').onclick = ()=>{ Progress.clear(); location.reload(); };
 let touching = false, lastT = 0;
 document.addEventListener('pointerdown', e=>{
   touching = true;
-  FX.burst(e.clientX, e.clientY, cur === 6 ? 9 : 7, cur === 6 ? 'gold' : 'white', 1.6, cur === 6);
+  const fin = cur === LETTER;
+  FX.burst(e.clientX, e.clientY, fin ? 9 : 7, fin ? 'gold' : 'white', 1.6, fin);
   Sky.look(e.clientX, e.clientY);
+  if(!e.target.closest('button,.card,.coupon,.carena,.modal') && Sky.hitEgg(e.clientX, e.clientY)) showEgg(e.clientX, e.clientY);
 });
+function showEgg(x, y){
+  FX.burst(x, y, 40, 'mix', 5, true);
+  $('#mcard').innerHTML = '<div class="ico">✦</div><h3>Секретная звезда</h3><p></p><button class="btn ghost" id="mclose">Закрыть</button>';
+  $('#mcard p').textContent = CONFIG.eggText;
+  setTimeout(()=>$('#modal').classList.add('open'), 200);
+  $('#mclose').onclick = ()=>$('#modal').classList.remove('open');
+}
 document.addEventListener('pointerup', ()=>touching = false);
 document.addEventListener('pointercancel', ()=>touching = false);
 document.addEventListener('pointermove', e=>{
@@ -1054,6 +1352,7 @@ const Sky = (()=>{
   const c = $('#sky'), x = c.getContext('2d'), root = document.documentElement.style;
   let W, H, r, neb, stars = [], shoot = null, zoom = 1, zt = 1, t = 0, warp = 0, wt = 0;
   let lx = 0, ly = 0, ltx = 0, lty = 0, ripples = [], lastRipple = 0, prevB = 0, heart = null;
+  let egg = null, eggFound = false, eggNext = performance.now() + 25000;
   const gauss = () => (Math.random()+Math.random()+Math.random()-1.5)/1.5;
   const blob = rgb => { const s = document.createElement('canvas'); s.width = s.height = 128;
     const g = s.getContext('2d'), gr = g.createRadialGradient(64,64,0,64,64,64);
@@ -1213,6 +1512,26 @@ const Sky = (()=>{
 
     x.globalAlpha = 1; x.drawImage(vig, 0, 0, W, H);
 
+    // секретная звезда: иногда появляется сверху или снизу экрана на 8 секунд
+    if(!eggFound && !egg && now > eggNext && cur > 0){
+      const top = Math.random() < .5;
+      egg = { x:(.14 + Math.random()*.72)*W, y:(top ? .05 + Math.random()*.08 : .86 + Math.random()*.07)*H, t0:now };
+    }
+    if(egg){
+      const age = (now - egg.t0)/1000;
+      if(age > 8){ egg = null; eggNext = now + 20000 + Math.random()*15000; }
+      else {
+        const fade = Math.min(1, age/1.2, (8 - age)/1.2), pulse = 1 + .25*Math.sin(now/180);
+        const sz = 34*r*pulse;
+        x.globalAlpha = .6*fade; x.drawImage(SPR.pink, egg.x - sz, egg.y - sz, sz*2, sz*2);
+        x.globalAlpha = fade; x.drawImage(SPR.gold, egg.x - sz/2, egg.y - sz/2, sz, sz);
+        x.save(); x.translate(egg.x, egg.y); x.rotate(now/900); x.strokeStyle = '#fff4e0'; x.lineWidth = r; x.globalAlpha = .8*fade;
+        const L = 16*r*pulse; x.beginPath(); x.moveTo(-L,0); x.lineTo(L,0); x.moveTo(0,-L); x.lineTo(0,L); x.stroke();
+        x.rotate(Math.PI/4); x.globalAlpha = .4*fade; x.beginPath(); x.moveTo(-L*.6,0); x.lineTo(L*.6,0); x.moveTo(0,-L*.6); x.lineTo(0,L*.6); x.stroke();
+        x.restore();
+      }
+    }
+
     // мягкие кольца-волны на сильных долях
     if(P.live && P.b > .85 && prevB < .8 && now - lastRipple > 900){
       lastRipple = now;
@@ -1248,6 +1567,11 @@ const Sky = (()=>{
   return {
     warp(p = 1){ wt = p; zt += .22; },
     look(px, py){ ltx = px/innerWidth - .5; lty = py/innerHeight - .5; },
+    hitEgg(px, py){
+      if(!egg) return false;
+      if(Math.hypot(px*r - egg.x, py*r - egg.y) > 40*r) return false;
+      egg = null; eggFound = true; return true;
+    },
     heart(el){
       const list = [];
       for(let i=0;i<OUT;i++){ const [hx,hy] = heartXY(i/OUT*Math.PI*2); list.push({ hx, hy, d:i*26, sz:1.5 + Math.random()*.7 }); }
